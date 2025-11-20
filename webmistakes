@@ -1,0 +1,32 @@
+#!/usr/bin/python3
+# SPDX-License-Identifier: 0BSD
+#
+# Checks web pages for obsolete or discouraged HTML,
+# written by Hanno Böck, https://hboeck.de/
+
+import argparse
+import urllib.request
+
+import lxml.html
+
+ap = argparse.ArgumentParser()
+ap.add_argument("url")
+
+args = ap.parse_args()
+
+u = urllib.request.urlopen(args.url)
+ht = lxml.html.parse(u)
+
+for css in ht.findall(".//link[@rel='stylesheet']"):
+    csstype = css.get("type")
+    if csstype == "text/css":
+        print('WARNING: type="text/css" for CSS not needed in HTML5')
+    elif csstype:
+        print(f"WARNING: unknown stylesheet type {csstype}")
+
+if ht.findall(".//link[@rel='shortcut icon']"):
+    print('WARNING: Use of obsolete IE rel="shortcut icon" (use rel="icon")')
+
+if ht.findall(".//meta[@http-equiv='content-language']"):
+    # https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/meta/http-equiv
+    print("WARNING: <meta http-equiv='content-language' ...> is obsolete, use <html lang='xx'>")
