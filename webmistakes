@@ -36,10 +36,21 @@ metacharset = ht.findall(".//meta[@charset]")
 if len(metacharset) > 1:
     print("ERROR: More than one <meta charset=...> element")
 
-if ht.findall(".//meta[@http-equiv='content-type']"):
-    if metacharset:
-        # https://html.spec.whatwg.org/multipage/semantics.html#attr-meta-charset
-        print("ERROR: Both <meta charset=...> and <meta http-equiv='content-type' ...> used")
-    else:
-        # https://blog.whatwg.org/meta-charset
-        print("WARNING: Old-style <meta http-equiv='content-type' ...>, use <meta charset=...>")
+for httpequiv in ht.findall(".//meta[@http-equiv]"):
+    heqvalue = httpequiv.get("http-equiv")
+    # lowercase to find cases where people use, e.g., Content-Type
+    heqvalue_l = heqvalue.lower()
+    if heqvalue_l == "content-type":
+        if metacharset:
+            # https://html.spec.whatwg.org/multipage/semantics.html#attr-meta-charset
+            print("ERROR: Both <meta charset=...> and <meta http-equiv='content-type' ...> used")
+        else:
+            # https://blog.whatwg.org/meta-charset
+            print("WARNING: Old-style <meta http-equiv='content-type' ...>, use <meta charset=...>")
+    elif heqvalue_l == "content-language":
+        print("WARNING: Obsolete <meta http-equiv='content-language' ...>, use <html lang='...'>")
+    elif heqvalue_l == "x-ua-compatible":
+        print("WARNING: <meta http-equiv='X-UA-Compatible' ...> is obsolete (IE feature)")
+    elif heqvalue_l == "set-cookie":
+        # https://html.spec.whatwg.org/multipage/semantics.html#attr-meta-http-equiv-set-cookie
+        print("WARNING: <meta http-equiv='set-cookie' ...> is ignored by modern browser")
