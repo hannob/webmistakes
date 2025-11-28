@@ -29,4 +29,17 @@ if ht.findall(".//link[@rel='shortcut icon']"):
 
 if ht.findall(".//meta[@http-equiv='content-language']"):
     # https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/meta/http-equiv
+    # https://www.w3.org/TR/2011/WD-html-markup-20110113/meta.http-equiv.content-language.html
     print("WARNING: <meta http-equiv='content-language' ...> is obsolete, use <html lang='xx'>")
+
+metacharset = ht.findall(".//meta[@charset]")
+if len(metacharset) > 1:
+    print("ERROR: More than one <meta charset=...> element")
+
+if ht.findall(".//meta[@http-equiv='content-type']"):
+    if metacharset:
+        # https://html.spec.whatwg.org/multipage/semantics.html#attr-meta-charset
+        print("ERROR: Both <meta charset=...> and <meta http-equiv='content-type' ...> used")
+    else:
+        # https://blog.whatwg.org/meta-charset
+        print("WARNING: Old-style <meta http-equiv='content-type' ...>, use <meta charset=...>")
