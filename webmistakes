@@ -20,6 +20,7 @@ ht = lxml.html.parse(u)
 for css in ht.findall(".//link[@rel='stylesheet']"):
     csstype = css.get("type")
     if csstype == "text/css":
+        # https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/style#type
         print('WARNING: type="text/css" for CSS not needed in HTML5')
     elif csstype:
         print(f"WARNING: unknown stylesheet type {csstype}")
