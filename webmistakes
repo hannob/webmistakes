@@ -40,6 +40,11 @@ if ht.findall(".//link[@rel='shortcut icon']"):
 metacharset = ht.findall(".//meta[@charset]")
 if len(metacharset) > 1:
     print("ERROR: More than one <meta charset=...> element")
+if metacharset:
+    m = ht.findall(".//head/*[1]")
+    if m[0] != metacharset[0]:
+        # https://code.google.com/archive/p/doctype-mirror/wikis/MetaCharsetAttribute.wiki
+        _warn("<meta charset=...> should be first in <head>")
 
 # Values from here minus the ones that are obsolete or discouraged
 # https://html.spec.whatwg.org/#attr-meta-http-equiv
