@@ -23,8 +23,17 @@ ap.add_argument("url")
 
 args = ap.parse_args()
 
-u = urllib.request.urlopen(args.url)
-ht = lxml.html.parse(u)
+with urllib.request.urlopen(args.url) as u:
+    headers = u.getheaders()
+    ht = lxml.html.parse(u)
+
+obsoleteheaders = ["x-ua-compatible", "x-xss-protection",
+                   "expect-ct", "public-key-pins", "pragma",
+                   "warning"]
+for h, _v in headers:
+    header = h.lower()
+    if header in obsoleteheaders:
+        _warn(f"{header} header is obsolete")
 
 for css in ht.findall(".//link[@rel='stylesheet']"):
     csstype = css.get("type")
