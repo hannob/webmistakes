@@ -5,6 +5,7 @@
 # written by Hanno Böck, https://hboeck.de/
 
 import argparse
+import urllib.parse
 import urllib.request
 
 import lxml.html
@@ -20,7 +21,7 @@ def _safeesc(s):
 
 ap = argparse.ArgumentParser()
 ap.add_argument("url")
-
+ap.add_argument("-r", "--refs", action="store_true", help="Check references (css, js, icon, ...)")
 args = ap.parse_args()
 
 with urllib.request.urlopen(args.url) as u:
@@ -80,3 +81,42 @@ for httpequiv in ht.findall(".//meta[@http-equiv]"):
             # * content-style-type/content-script-type were part of HTML 4, removed in HTML 5
             safeheq = _safeesc(heqvalue)
             _warn(f"http-equiv='{safeheq}' is obsolete or invalid")
+
+if args.refs:
+
+    for script in ht.findall(".//script[@src]"):
+        src = script.get("src")
+        asseturl = urllib.parse.urljoin(args.url, src)
+        req = urllib.request.Request(asseturl, method="HEAD")
+        try:
+            with urllib.request.urlopen(req) as u:
+                contenttype = u.info().get_content_type()
+                if contenttype != "text/javascript":
+                    # https://datatracker.ietf.org/doc/html/rfc9239
+                    _warn(f"invalid or obsolete JavaScript content type {_safeesc(contenttype)}")
+        except urllib.error.HTTPError:
+            _warn(f"unable to fetch script {asseturl}")
+
+    for style in ht.findall(".//link[@rel='stylesheet']"):
+        src = style.get("href")
+        asseturl = urllib.parse.urljoin(args.url, src)
+        req = urllib.request.Request(asseturl, method="HEAD")
+        try:
+            with urllib.request.urlopen(req) as u:
+                contenttype = u.info().get_content_type()
+                if contenttype != "text/css":
+                    _warn(f"invalid or obsolete CSS content type {_safeesc(contenttype)}")
+        except urllib.error.HTTPError:
+            _warn(f"unable to fetch style {asseturl}")
+
+    for style in ht.findall(".//link[@rel='icon']") + ht.findall(".//link[@rel='shortcut icon']"):
+        src = style.get("href")
+        asseturl = urllib.parse.urljoin(args.url, src)
+        req = urllib.request.Request(asseturl, method="HEAD")
+        try:
+            with urllib.request.urlopen(req) as u:
+                contenttype = u.info().get_content_type()
+                if not contenttype.startswith("image/"):
+                    _warn(f"Favicon of type {_safeesc(contenttype)} not an image")
+        except urllib.error.HTTPError:
+            _warn(f"unable to fetch icon {asseturl}")
