@@ -82,6 +82,19 @@ for httpequiv in ht.findall(".//meta[@http-equiv]"):
             safeheq = _safeesc(heqvalue)
             _warn(f"http-equiv='{safeheq}' is obsolete or invalid")
 
+
+vp = ht.findall(".//meta[@name='viewport']")
+if len(vp) > 1:
+    _warn("More than one <meta name='viewport' ...> tags")
+if vp:
+    vpcontent = vp[0].get("content")
+    for vpfield in vpcontent.split(","):
+        if vpfield.strip() != vpfield:
+            _warn("Unnecessary whitespace in viewport value")
+        if vpfield.strip().split("=")[-1].endswith(".0"):
+            _warn("Unnecessary float in viewport value (e.g., 1.0 instead of 1)")
+
+
 if args.refs:
 
     for script in ht.findall(".//script[@src]"):
