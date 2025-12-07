@@ -26,7 +26,10 @@ args = ap.parse_args()
 
 with urllib.request.urlopen(args.url) as u:
     headers = u.getheaders()
-    ht = lxml.html.parse(u)
+    hdata = u.read()
+
+
+# Check headers
 
 obsoleteheaders = ["x-ua-compatible", "x-xss-protection",
                    "expect-ct", "public-key-pins", "pragma",
@@ -35,6 +38,17 @@ for h, _v in headers:
     header = h.lower()
     if header in obsoleteheaders:
         _warn(f"{header} header is obsolete")
+
+
+# check raw HTML
+
+if b'<!--[if' in hdata or b'<![if' in hdata:
+    _warn("IE-style conditional comments like <!--[if IE]> found")
+
+
+# check parsed HTML
+
+ht = lxml.html.fromstring(hdata)
 
 for css in ht.findall(".//link[@rel='stylesheet']"):
     csstype = css.get("type")
