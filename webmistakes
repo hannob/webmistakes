@@ -42,7 +42,7 @@ for h, _v in headers:
 
 # check raw HTML
 
-if b'<!--[if' in hdata or b'<![if' in hdata:
+if b"<!--[if" in hdata or b"<![if" in hdata:
     _warn("IE-style conditional comments like <!--[if IE]> found")
 
 
