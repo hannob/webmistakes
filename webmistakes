@@ -7,6 +7,7 @@
 import argparse
 import urllib.parse
 import urllib.request
+import re
 
 import lxml.html
 
@@ -47,6 +48,16 @@ if b"<!--[if" in hdata or b"<![if" in hdata:
 
 if not hdata.startswith((b"<!DOCTYPE html>", b"<!doctype html>")):
     _warn("Document does not start with standard HTML5 doctype")
+
+
+basicentities = ["&amp;", "&lt;", "&gt;", "&apos", "&quot", "&nbsp"]
+for entity in re.findall(b"&[a-zA-Z0-9]{1,64};", hdata):
+    ee = entity.decode()
+    # recommended to avoid here
+    # https://google.github.io/styleguide/htmlcssguide.html#Entity_References
+    if ee not in basicentities:
+        _warn(f"Use standard utf-8 character instead of entity {ee}")
+
 
 # check parsed HTML
 
