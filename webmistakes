@@ -45,6 +45,8 @@ for h, _v in headers:
 if b"<!--[if" in hdata or b"<![if" in hdata:
     _warn("IE-style conditional comments like <!--[if IE]> found")
 
+if not hdata.startswith((b"<!DOCTYPE html>", b"<!doctype html>")):
+    _warn("Document does not start with standard HTML5 doctype")
 
 # check parsed HTML
 
