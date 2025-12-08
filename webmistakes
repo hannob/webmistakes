@@ -5,9 +5,9 @@
 # written by Hanno Böck, https://hboeck.de/
 
 import argparse
+import re
 import urllib.parse
 import urllib.request
-import re
 
 import lxml.html
 
