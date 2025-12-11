@@ -35,7 +35,7 @@ with urllib.request.urlopen(args.url) as u:
 obsoleteheaders = ["x-ua-compatible", "x-xss-protection",
                    "expect-ct", "public-key-pins", "pragma",
                    "warning"]
-allheaders=set()
+allheaders = set()
 for h, _v in headers:
     header = h.lower()
     if header in allheaders and header != "set-cookie":
