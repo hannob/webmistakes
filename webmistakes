@@ -55,7 +55,7 @@ if not hdata.startswith((b"<!DOCTYPE html>", b"<!doctype html>")):
     _warn("Document does not start with standard HTML5 doctype")
 
 
-basicentities = ["&amp;", "&lt;", "&gt;", "&apos", "&quot", "&nbsp"]
+basicentities = ["&amp;", "&lt;", "&gt;", "&apos;", "&quot;", "&nbsp;"]
 for entity in re.findall(b"&[a-zA-Z0-9]{1,64};", hdata):
     ee = entity.decode()
     # recommended to avoid here
