@@ -31,7 +31,9 @@ with urllib.request.urlopen(args.url) as u:
 
 
 # Check headers
-
+# https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Pragma
+# https://groups.google.com/a/chromium.org/g/blink-dev/c/TuYw-EZhO9g/m/blGViehIAwAJ
+# ...
 obsoleteheaders = ["x-ua-compatible", "x-xss-protection",
                    "expect-ct", "public-key-pins", "pragma",
                    "warning"]
@@ -110,9 +112,14 @@ for httpequiv in ht.findall(".//meta[@http-equiv]"):
             # Notes about obsolete http-equiv values:
             # * set-cookie is ignored according to whatwg spec
             # * x-ua-compatible is an Internet Explorer feature
+            # https://html.spec.whatwg.org/multipage/semantics.html#attr-meta-http-equiv-x-ua-compatible
             # * content-style-type/content-script-type were part of HTML 4, removed in HTML 5
             safeheq = _safeesc(heqvalue)
             _warn(f"http-equiv='{safeheq}' is obsolete or invalid")
+
+if ht.findall(".//meta[@name='HandheldFriendly']"):
+    # https://getoutofmyhead.dev/handheld-friendly/
+    _warn("Obsolete/nonstandard <meta name='HandheldFriendly'> (Palm Pilot AvantGo browser)")
 
 
 vp = ht.findall(".//meta[@name='viewport']")
