@@ -89,6 +89,11 @@ if metacharset:
     if m[0] != metacharset[0]:
         # https://code.google.com/archive/p/doctype-mirror/wikis/MetaCharsetAttribute.wiki
         _warn("<meta charset=...> should be first in <head>")
+    charset = metacharset[0].get("charset")
+    if charset.lower() != "utf-8":
+        _warn("<meta charset=...> needs to be utf-8")
+    if charset.lower() != charset:
+        _warn(f"Use lowercase charset value instead of {_safeesc(charset)}")
 
 # Values from here minus the ones that are obsolete or discouraged
 # https://html.spec.whatwg.org/#attr-meta-http-equiv
