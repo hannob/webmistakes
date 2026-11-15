@@ -58,7 +58,7 @@ if not hdata.startswith((b"<!DOCTYPE html>", b"<!doctype html>")):
 
 
 basicentities = ["&amp;", "&lt;", "&gt;", "&apos;", "&quot;", "&nbsp;"]
-for entity in re.findall(b"&[a-zA-Z0-9]{1,64};", hdata):
+for entity in re.findall(rb"&[a-zA-Z0-9]{1,64};", hdata):
     ee = entity.decode()
     # recommended to avoid here
     # https://google.github.io/styleguide/htmlcssguide.html#Entity_References
