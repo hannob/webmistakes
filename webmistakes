@@ -138,6 +138,13 @@ if vp:
         if vpfield.strip().split("=")[-1].endswith(".0"):
             _warn("Unnecessary float in viewport value (e.g., 1.0 instead of 1)")
 
+for sri in ht.findall(".//*[@integrity]"):
+    # https://developer.chrome.com/docs/modern-web-guidance/guides/security/secure-external-subresources
+    if sri.tag == "script":
+        continue
+    if "rel" in sri.attrib and sri.get("rel") in {"stylesheet", "preload", "modulepreload"}:
+        continue
+    _warn("SRI integrity attribute in element not supporting SRI")
 
 if args.refs:
 
